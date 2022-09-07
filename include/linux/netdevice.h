@@ -297,7 +297,7 @@ enum netdev_state_t
 	__LINK_STATE_PRESENT,
 	__LINK_STATE_NOCARRIER,
 	__LINK_STATE_LINKWATCH_PENDING,
-	__LINK_STATE_DORMANT,
+	__LINK_STATE_DORMANT, // 休眠的
 };
 
 
@@ -693,7 +693,7 @@ struct net_device
 #define NETIF_F_IPV6_CSUM	16	/* Can checksum TCP/UDP over IPV6 */
 #define NETIF_F_HIGHDMA		32	/* Can DMA to high memory. */
 #define NETIF_F_FRAGLIST	64	/* Scatter/gather IO. */
-#define NETIF_F_HW_VLAN_TX	128	/* Transmit VLAN hw acceleration */
+#define NETIF_F_HW_VLAN_TX	128	/* Transmit VLAN hw acceleration 硬件加速 */
 #define NETIF_F_HW_VLAN_RX	256	/* Receive VLAN hw acceleration */
 #define NETIF_F_HW_VLAN_FILTER	512	/* Receive filtering on VLAN */
 #define NETIF_F_VLAN_CHALLENGED	1024	/* Device cannot handle VLAN packets */
@@ -794,15 +794,15 @@ struct net_device
 	unsigned int		allmulti;
 
 
-	/* Protocol specific pointers */
+	/* Protocol specific pointers 协议规范*/
 	
 #ifdef CONFIG_NET_DSA
 	void			*dsa_ptr;	/* dsa specific data */
 #endif
 	void 			*atalk_ptr;	/* AppleTalk link 	*/
 	void			*ip_ptr;	/* IPv4 specific data	*/
-	void                    *dn_ptr;        /* DECnet specific data */
-	void                    *ip6_ptr;       /* IPv6 specific data */
+	void			*dn_ptr;	/* DECnet specific data */
+	void			*ip6_ptr;	/* IPv6 specific data */
 	void			*ec_ptr;	/* Econet specific data	*/
 	void			*ax25_ptr;	/* AX.25 specific data */
 	struct wireless_dev	*ieee80211_ptr;	/* IEEE 802.11 specific data,
@@ -1050,6 +1050,7 @@ struct napi_gro_cb {
 
 #define NAPI_GRO_CB(skb) ((struct napi_gro_cb *)(skb)->cb)
 
+// 包类型处理接口，不同类型的包注册该结构
 struct packet_type {
 	__be16			type;	/* This is really htons(ether_type). */
 	struct net_device	*dev;	/* NULL is wildcarded here	     */

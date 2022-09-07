@@ -1257,6 +1257,7 @@ int register_netdevice_notifier(struct notifier_block *nb)
 		goto unlock;
 	if (dev_boot_phase)
 		goto unlock;
+	// list_for_each_entry(net, &net_namespace_list, list)
 	for_each_net(net) {
 		for_each_netdev(net, dev) {
 			err = nb->notifier_call(nb, NETDEV_REGISTER, dev);

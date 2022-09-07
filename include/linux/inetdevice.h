@@ -16,18 +16,20 @@ struct ipv4_devconf
 	int	data[__NET_IPV4_CONF_MAX - 1];
 	DECLARE_BITMAP(state, __NET_IPV4_CONF_MAX - 1);
 };
-
+// ipv4设备
 struct in_device
 {
 	struct net_device	*dev;
 	atomic_t		refcnt;
 	int			dead;
 	struct in_ifaddr	*ifa_list;	/* IP ifaddr chain		*/
+
 	rwlock_t		mc_list_lock;
 	struct ip_mc_list	*mc_list;	/* IP multicast filter chain    */
 	int			mc_count;	          /* Number of installed mcasts	*/
 	spinlock_t		mc_tomb_lock;
 	struct ip_mc_list	*mc_tomb;
+	
 	unsigned long		mr_v1_seen;
 	unsigned long		mr_v2_seen;
 	unsigned long		mr_maxdelay;

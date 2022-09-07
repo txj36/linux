@@ -125,8 +125,8 @@ struct neighbour
 struct neigh_ops
 {
 	int			family;
-	void			(*solicit)(struct neighbour *, struct sk_buff*);
-	void			(*error_report)(struct neighbour *, struct sk_buff*);
+	void		(*solicit)(struct neighbour *, struct sk_buff*); // 请求
+	void		(*error_report)(struct neighbour *, struct sk_buff*); // 当neigh不可达是调用
 	int			(*output)(struct sk_buff*);
 	int			(*connected_output)(struct sk_buff*);
 	int			(*hh_output)(struct sk_buff*);

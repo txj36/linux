@@ -964,7 +964,7 @@ static void neigh_update_hhs(struct neighbour *neigh)
    -- flags
 	NEIGH_UPDATE_F_OVERRIDE allows to override existing lladdr,
 				if it is different.
-	NEIGH_UPDATE_F_WEAK_OVERRIDE will suspect existing "connected"
+	NEIGH_UPDATE_F_WEAK_OVERRIDE will suspect[怀疑] existing "connected"
 				lladdr instead of overriding it
 				if it is different.
 				It also allows to retain current state
@@ -1006,7 +1006,7 @@ int neigh_update(struct neighbour *neigh, const u8 *lladdr, u8 new,
 		err = 0;
 		notify = old & NUD_VALID;
 		if ((old & (NUD_INCOMPLETE | NUD_PROBE)) &&
-		    (new & NUD_FAILED)) {
+		    (new & NUD_FAILED)) { // 只有NUD_INCOMPLETE | NUD_PROBE转NUD_FAILED
 			neigh_invalidate(neigh);
 			notify = 1;
 		}

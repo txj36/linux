@@ -139,7 +139,7 @@ static const struct neigh_ops arp_generic_ops = {
 	.hh_output =		dev_queue_xmit,
 	.queue_xmit =		dev_queue_xmit,
 };
-
+// 缓存硬件首部
 static const struct neigh_ops arp_hh_ops = {
 	.family =		AF_INET,
 	.solicit =		arp_solicit,
@@ -149,7 +149,7 @@ static const struct neigh_ops arp_hh_ops = {
 	.hh_output =		dev_queue_xmit,
 	.queue_xmit =		dev_queue_xmit,
 };
-
+// 不支持arp
 static const struct neigh_ops arp_direct_ops = {
 	.family =		AF_INET,
 	.output =		dev_queue_xmit,
@@ -157,7 +157,7 @@ static const struct neigh_ops arp_direct_ops = {
 	.hh_output =		dev_queue_xmit,
 	.queue_xmit =		dev_queue_xmit,
 };
-
+// 支持无线电设备
 const struct neigh_ops arp_broken_ops = {
 	.family =		AF_INET,
 	.solicit =		arp_solicit,
@@ -680,7 +680,7 @@ void arp_send(int type, int ptype, __be32 dest_ip,
 	 *	No arp on this interface.
 	 */
 
-	if (dev->flags&IFF_NOARP)
+	if (dev->flags&IFF_NOARP) // 禁止arp
 		return;
 
 	skb = arp_create(type, ptype, dest_ip, dev, src_ip,
@@ -1236,12 +1236,13 @@ void __init arp_init(void)
 {
 	neigh_table_init(&arp_tbl);
 
-	dev_add_pack(&arp_packet_type);
-	arp_proc_init();
+	dev_add_pack(&arp_packet_type); // 添加arp包处理器
+	arp_proc_init(); // 空
 #ifdef CONFIG_SYSCTL
 	neigh_sysctl_register(NULL, &arp_tbl.parms, NET_IPV4,
 			      NET_IPV4_NEIGH, "ipv4", NULL, NULL);
 #endif
+	// 注册dev状态回调
 	register_netdevice_notifier(&arp_netdev_notifier);
 }
 

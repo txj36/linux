@@ -149,7 +149,7 @@ static const struct neigh_ops arp_hh_ops = {
 	.hh_output =		dev_queue_xmit,
 	.queue_xmit =		dev_queue_xmit,
 };
-// 不支持arp
+// 无需arp解析
 static const struct neigh_ops arp_direct_ops = {
 	.family =		AF_INET,
 	.output =		dev_queue_xmit,

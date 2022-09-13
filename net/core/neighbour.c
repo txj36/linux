@@ -1024,14 +1024,14 @@ int neigh_update(struct neighbour *neigh, const u8 *lladdr, u8 new,
 		   - if they are different, check override flag
 		 */
 		if ((old & NUD_VALID) &&
-		    !memcmp(lladdr, neigh->ha, dev->addr_len))
+		    !memcmp(lladdr, neigh->ha, dev->addr_len)) // 相同
 			lladdr = neigh->ha;
 	} else {
 		/* No address is supplied; if we know something,
 		   use it, otherwise discard the request.
 		 */
 		err = -EINVAL;
-		if (!(old & NUD_VALID))
+		if (!(old & NUD_VALID)) // 之前是合法的，继续使用
 			goto out;
 		lladdr = neigh->ha;
 	}
@@ -1072,10 +1072,10 @@ int neigh_update(struct neighbour *neigh, const u8 *lladdr, u8 new,
 						 0)));
 		neigh->nud_state = new;
 	}
-
+	// 链路地址改变
 	if (lladdr != neigh->ha) {
 		memcpy(&neigh->ha, lladdr, dev->addr_len);
-		neigh_update_hhs(neigh);
+		neigh_update_hhs(neigh);// 刷新缓存
 		if (!(new & NUD_CONNECTED))
 			neigh->confirmed = jiffies -
 				      (neigh->parms->base_reachable_time << 1);
@@ -1091,8 +1091,8 @@ int neigh_update(struct neighbour *neigh, const u8 *lladdr, u8 new,
 		struct sk_buff *skb;
 
 		/* Again: avoid dead loop if something went wrong */
-
-		while (neigh->nud_state & NUD_VALID &&
+		// old非法，new合法，处理arp队列
+		while (neigh->nud_state & NUD_VALID && // 重新检查nud_state
 		       (skb = __skb_dequeue(&neigh->arp_queue)) != NULL) {
 			struct neighbour *n1 = neigh;
 			write_unlock_bh(&neigh->lock);

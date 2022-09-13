@@ -127,8 +127,8 @@ struct neigh_ops
 	int			family;
 	void		(*solicit)(struct neighbour *, struct sk_buff*); // 请求
 	void		(*error_report)(struct neighbour *, struct sk_buff*); // 当neigh不可达是调用
-	int			(*output)(struct sk_buff*);
-	int			(*connected_output)(struct sk_buff*);
+	int			(*output)(struct sk_buff*); // 需进行邻居可达性确认
+	int			(*connected_output)(struct sk_buff*); // 邻居是可达的
 	int			(*hh_output)(struct sk_buff*);
 	int			(*queue_xmit)(struct sk_buff*);
 };

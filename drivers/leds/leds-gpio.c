@@ -25,18 +25,18 @@ struct gpio_led_data {
 	struct led_classdev cdev;
 	struct gpio_desc *gpiod;
 	u8 can_sleep;
-	u8 blinking;
+	u8 blinking; // 闪烁
 	gpio_blink_set_t platform_gpio_blink_set;
 };
 
 static inline struct gpio_led_data *
-			cdev_to_gpio_led_data(struct led_classdev *led_cdev)
+cdev_to_gpio_led_data(struct led_classdev *led_cdev)
 {
 	return container_of(led_cdev, struct gpio_led_data, cdev);
 }
 
 static void gpio_led_set(struct led_classdev *led_cdev,
-	enum led_brightness value)
+			 enum led_brightness value)
 {
 	struct gpio_led_data *led_dat = cdev_to_gpio_led_data(led_cdev);
 	int level;
@@ -47,8 +47,8 @@ static void gpio_led_set(struct led_classdev *led_cdev,
 		level = 1;
 
 	if (led_dat->blinking) {
-		led_dat->platform_gpio_blink_set(led_dat->gpiod, level,
-						 NULL, NULL);
+		led_dat->platform_gpio_blink_set(led_dat->gpiod, level, NULL,
+						 NULL);
 		led_dat->blinking = 0;
 	} else {
 		if (led_dat->can_sleep)
@@ -59,14 +59,14 @@ static void gpio_led_set(struct led_classdev *led_cdev,
 }
 
 static int gpio_led_set_blocking(struct led_classdev *led_cdev,
-	enum led_brightness value)
+				 enum led_brightness value)
 {
 	gpio_led_set(led_cdev, value);
 	return 0;
 }
 
 static int gpio_blink_set(struct led_classdev *led_cdev,
-	unsigned long *delay_on, unsigned long *delay_off)
+			  unsigned long *delay_on, unsigned long *delay_off)
 {
 	struct gpio_led_data *led_dat = cdev_to_gpio_led_data(led_cdev);
 
@@ -76,8 +76,8 @@ static int gpio_blink_set(struct led_classdev *led_cdev,
 }
 
 static int create_gpio_led(const struct gpio_led *template,
-	struct gpio_led_data *led_dat, struct device *parent,
-	struct device_node *np, gpio_blink_set_t blink_set)
+			   struct gpio_led_data *led_dat, struct device *parent,
+			   struct device_node *np, gpio_blink_set_t blink_set)
 {
 	int ret, state;
 
@@ -92,8 +92,9 @@ static int create_gpio_led(const struct gpio_led *template,
 
 		/* skip leds that aren't available */
 		if (!gpio_is_valid(template->gpio)) {
-			dev_info(parent, "Skipping unavailable LED gpio %d (%s)\n",
-					template->gpio, template->name);
+			dev_info(parent,
+				 "Skipping unavailable LED gpio %d (%s)\n",
+				 template->gpio, template->name);
 			return 0;
 		}
 
@@ -152,7 +153,7 @@ struct gpio_leds_priv {
 static inline int sizeof_gpio_leds_priv(int num_leds)
 {
 	return sizeof(struct gpio_leds_priv) +
-		(sizeof(struct gpio_led_data) * num_leds);
+	       (sizeof(struct gpio_led_data) * num_leds);
 }
 
 static struct gpio_leds_priv *gpio_leds_create(struct platform_device *pdev)
@@ -170,7 +171,7 @@ static struct gpio_leds_priv *gpio_leds_create(struct platform_device *pdev)
 	if (!priv)
 		return ERR_PTR(-ENOMEM);
 
-	device_for_each_child_node(dev, child) {
+	device_for_each_child_node (dev, child) {
 		struct gpio_led_data *led_dat = &priv->leds[priv->num_leds];
 		struct gpio_led led = {};
 		const char *state = NULL;
@@ -184,9 +185,8 @@ static struct gpio_leds_priv *gpio_leds_create(struct platform_device *pdev)
 			return ERR_PTR(-EINVAL);
 		}
 
-		led.gpiod = devm_fwnode_get_gpiod_from_child(dev, NULL, child,
-							     GPIOD_ASIS,
-							     led.name);
+		led.gpiod = devm_fwnode_get_gpiod_from_child(
+			dev, NULL, child, GPIOD_ASIS, led.name);
 		if (IS_ERR(led.gpiod)) {
 			fwnode_handle_put(child);
 			return ERR_CAST(led.gpiod);
@@ -225,7 +225,9 @@ static struct gpio_leds_priv *gpio_leds_create(struct platform_device *pdev)
 }
 
 static const struct of_device_id of_gpio_leds_match[] = {
-	{ .compatible = "gpio-leds", },
+	{
+		.compatible = "gpio-leds",
+	},
 	{},
 };
 
@@ -239,8 +241,8 @@ static int gpio_led_probe(struct platform_device *pdev)
 
 	if (pdata && pdata->num_leds) {
 		priv = devm_kzalloc(&pdev->dev,
-				sizeof_gpio_leds_priv(pdata->num_leds),
-					GFP_KERNEL);
+				    sizeof_gpio_leds_priv(pdata->num_leds),
+				    GFP_KERNEL);
 		if (!priv)
 			return -ENOMEM;
 
@@ -252,7 +254,7 @@ static int gpio_led_probe(struct platform_device *pdev)
 			if (ret < 0)
 				return ret;
 		}
-	} else {
+	} else { // 创建led数据
 		priv = gpio_leds_create(pdev);
 		if (IS_ERR(priv))
 			return PTR_ERR(priv);
@@ -287,7 +289,8 @@ static struct platform_driver gpio_led_driver = {
 
 module_platform_driver(gpio_led_driver);
 
-MODULE_AUTHOR("Raphael Assenat <raph@8d.com>, Trent Piepho <tpiepho@freescale.com>");
+MODULE_AUTHOR(
+	"Raphael Assenat <raph@8d.com>, Trent Piepho <tpiepho@freescale.com>");
 MODULE_DESCRIPTION("GPIO LED driver");
 MODULE_LICENSE("GPL");
 MODULE_ALIAS("platform:leds-gpio");
